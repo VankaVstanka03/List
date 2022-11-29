@@ -1,6 +1,7 @@
 #pragma once
 #include "iterator.h"
 #include <initializer_list>
+#include <list>
 
 template <class T>
 class list {
@@ -17,6 +18,35 @@ class list {
 	};
 	Node* first = nullptr;
 public:
+
+	class list_iterator {
+		Node<T>* ptr;
+	public:
+		list_iterator() {};
+
+		list_iterator(Node<T>* data) {
+			ptr = data;
+		};
+
+		list_iterator& operator++() {
+			ptr = ptr->next;
+			return *this;
+		};
+
+		list_iterator operator++(int) {
+			list_iterator copy(this->ptr);
+			ptr = ptr->next;
+			return copy;
+		};
+
+		friend bool operator!=(const list_iterator& it1, const list_iterator& it2) {
+			if (it1->ptr != it2->ptr)
+				return true;
+			else
+				return false;
+		};
+	};
+
 	list() {
 
 	};
@@ -59,7 +89,7 @@ public:
 	};
 
 	list& operator=(const list& l) {
-
+		
 	};
 
 	list& operator=(const list&& l) {
@@ -77,4 +107,80 @@ public:
 		return nums;
 	};
 
+	void clear() {};
+
+	void merge(list& a) {};
+
+	void merge(list&& a) {};
+
+	void sort() {};
+
+	void insert_after(Node* prev, T val) {};
+
+	void erase_after(Node* prev) {};
+};
+
+template <class T>
+class Stack {
+	std::list<T> data;
+public:
+	
+	Stack() {};
+
+	Stack(T val) {
+		data.push_back(val);
+	};
+
+	void push(T val) {
+		data.push_back(val);
+	};
+
+	void pop() {
+		if (data.empty())
+			throw std::exception("Empty stack");
+		data.pop_back();
+	};
+
+	T top() {
+		return data.back();
+	};
+
+	bool empty() {
+		return data.empty();
+	};
+
+	size_t sz() { return data.size(); };
+};
+
+template <class T>
+class Queue {
+	std::list<T> data;
+public:
+	Queue() {};
+
+	Queue(T val) {
+		data.push_back(val);
+	};
+
+	void push(T val) {
+		data.push_back(val);
+	};
+
+	void pop() {
+		if (data.empty())
+			throw std::exception("Empty queue");
+		data.pop_front();
+	};
+
+	T front() {
+		return data.front();
+	};
+
+	size_t sz() {
+		return data.size();
+	};
+
+	bool empty() {
+		return data.empty();
+	};
 };
