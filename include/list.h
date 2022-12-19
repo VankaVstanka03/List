@@ -54,8 +54,16 @@ class list {
 				return false;
 		};
 
-		Node* operator*() {
-			return ptr;
+		friend bool operator==(const iterator& it1, const iterator& it2) {
+			return !(it1 != it2);
+		};
+
+		T& operator*() {
+			return ptr->elem;
+		};
+
+		Node* get_node() {
+			return this->ptr;
 		};
 	};
 
@@ -100,44 +108,66 @@ public:
 			lptr = lptr->next;
 			tmp = tmp->next;
 		}
+		this->size = l.size;
+	};
+
+	list(list&& l) {
+		Node* tmp = l.first;
+		this->first = tmp;
+		this->size = l.size;
+		l.first = nullptr;
 	};
 
 	~list() {
 		Node* tmp = first;
-		while (tmp) {
-			Node* tmp2 = tmp->next;
-			delete tmp;
-			tmp = tmp2;
+		while (size) {
+			if (tmp != nullptr) {
+				Node* tmp2 = tmp->next;
+				delete tmp;
+				tmp = tmp2;
+			}
+			size--;
 		}
 	};
 
 	list& operator=(const list& l) {
-		
+		if (this == &l)
+			return *this;
+		list res(l);
+		this->clear();
+		this->first = res.first;
+		this->size = l.size;
+		return *this;
 	};
 
-	list& operator=(const list&& l) {
-
+	list& operator=(list&& l) {
+		this->clear();
+		this->size = l.size;
+		Node* tmp = l.first;
+		this->first = tmp;
+		l.first = nullptr;
 	};
 
 	size_t get_size() {
 		return size;
 	};
 
-	Node* operator[](size_t pos){
+	T& operator[](size_t pos){
 		return *(this->in_pos(pos));
 	};
 
 	void clear(){
 		Node* tmp = first;
-		while (tmp) {
+		while (size) {
 			Node* tmp2 = tmp->next;
 			delete tmp;
 			tmp = tmp2;
+			size--;
 		}
 	};
 
 	void push_back(T val) {
-		Node* tmp = (*this)[size - 1];
+		Node* tmp = (this->pre_end()).get_node();
 		tmp->next = new Node(val);
 		size++;
 	};
@@ -220,16 +250,16 @@ public:
 
 	void sort() {};
 
-	void insert_after(Node* prev, T val) {
-		Node* tmp = prev->next;
-		prev->next = new Node(val);
-		prev->next->next = tmp;
+	void insert_after(iterator prev, T val) {
+		Node* tmp = prev.get_node()->next;
+		prev.get_node()->next = new Node(val);
+		prev.get_node()->next->next = tmp;
 		size++;
 	};
 
-	void erase_after(Node* prev) {
-		Node* tmp = prev->next;
-		prev->next = tmp->next;
+	void erase_after(iterator prev) {
+		Node* tmp = prev.get_node()->next;
+		prev.get_node()->next = tmp->next;
 		delete tmp;
 		size--;
 	};
@@ -247,9 +277,23 @@ public:
 		return iterator(tmp);
 	};
 
-
 	iterator end() {
 		return iterator(nullptr);
+	};
+
+	iterator pre_end() {
+		return this->in_pos(size - 1);
+	};
+
+	friend list circled_list(list&& l) {
+		list copy = std::move(l);
+		Node* tmp = copy.first;
+		copy.pre_end() = tmp;
+		return copy;
+	};
+
+	bool circle_in_the_list() {
+
 	};
 };
 
