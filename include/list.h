@@ -74,7 +74,9 @@ public:
 		size = 1;
 	};
 
-	explicit list(size_t count, std::initializer_list<T> init) {
+	explicit list(int count, std::initializer_list<T> init) {
+		if (count <= 0)
+			throw std::exception("Can't create list with size <= 0");
 		first = new Node();
 		size = count;
 		auto iter_init_list = init.begin();
@@ -250,18 +252,20 @@ public:
 
 	void sort() {};
 
-	void insert_after(iterator prev, T val) {
+	iterator insert_after(iterator prev, T val) {
 		Node* tmp = prev.get_node()->next;
 		prev.get_node()->next = new Node(val);
 		prev.get_node()->next->next = tmp;
 		size++;
+		return ++prev;
 	};
 
-	void erase_after(iterator prev) {
+	iterator erase_after(iterator prev) {
 		Node* tmp = prev.get_node()->next;
 		prev.get_node()->next = tmp->next;
 		delete tmp;
 		size--;
+		return ++prev;
 	};
 
 	iterator begin() {
@@ -293,7 +297,30 @@ public:
 	};
 
 	bool circle_in_the_list() {
-
+		Node* tmp1 = this->first;
+		Node* tmp2 = this->first;
+		while (tmp2 != nullptr) {
+			tmp1 = tmp1->next;
+			tmp2 = tmp2->next;
+			if (tmp2 == nullptr) {
+				return false;
+			}
+			if (tmp2->next != nullptr) {
+				if (tmp2->next->next != nullptr) {
+					tmp2 = tmp2->next->next;
+				}
+				else {
+					return false;
+				}
+			}
+			else {
+				return false;
+			}
+			if (tmp1 == tmp2) {
+				return true;
+			}
+		}
+		return false;
 	};
 };
 
