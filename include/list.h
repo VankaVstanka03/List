@@ -118,6 +118,7 @@ public:
 		this->first = tmp;
 		this->size = l.size;
 		l.first = nullptr;
+		l.size = 0;
 	};
 
 	~list() {
@@ -148,6 +149,7 @@ public:
 		Node* tmp = l.first;
 		this->first = tmp;
 		l.first = nullptr;
+		l.size = 0;
 	};
 
 	size_t get_size() {
@@ -207,6 +209,7 @@ public:
 		this->first = tmp->next;
 		delete tmp;
 		a.first = nullptr;
+		a.size = 0;
 	};
 
 	//void merge_with_iter(list& a) {
